@@ -1,0 +1,21 @@
+{% extends "restaurant/base.html" %}
+
+{% block title %}Checkout · {{ site.restaurant_name }}{% endblock %}
+
+{% block content %}
+<section class="wrap narrow">
+  <h1>Checkout</h1>
+  <div class="card">
+    {% for line in lines %}
+      <div>{{ line.qty }} × {{ line.item.name }} — €{{ line.line_total }}</div>
+    {% endfor %}
+    <p class="total">Total: €{{ total }}</p>
+  </div>
+
+  <form method="post" class="form">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button class="btn" type="submit">Place order</button>
+  </form>
+</section>
+{% endblock %}

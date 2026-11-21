@@ -1,0 +1,11 @@
+{% extends "restaurant/base.html" %}
+
+{% block title %}Booking received · {{ site.restaurant_name }}{% endblock %}
+
+{% block content %}
+<section class="wrap narrow">
+  <h1>Go raibh maith agat!</h1>
+  <p>We have received your booking request and will confirm it shortly.</p>
+  <a class="btn" href="{% url 'restaurant:home' %}">Back to home</a>
+</section>
+{% endblock %}

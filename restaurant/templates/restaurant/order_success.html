@@ -1,0 +1,21 @@
+{% extends "restaurant/base.html" %}
+
+{% block title %}Order confirmed · {{ site.restaurant_name }}{% endblock %}
+
+{% block content %}
+<section class="wrap narrow">
+  <h1>Go raibh maith agat!</h1>
+  <p>Your order <strong>#{{ order.id }}</strong> has been received.</p>
+  <div class="card">
+    <p>Pickup: {{ order.pickup_time|date:"D j M Y, H:i" }}</p>
+    <p>Status: {{ order.get_status_display }}</p>
+    <ul>
+      {% for line in order.items.all %}
+        <li>{{ line.quantity }} × {{ line.item_name }}</li>
+      {% endfor %}
+    </ul>
+    <p class="total">Total: €{{ order.total }}</p>
+  </div>
+  <a class="btn" href="{% url 'restaurant:account' %}">View my orders</a>
+</section>
+{% endblock %}

@@ -1,0 +1,15 @@
+{% extends "restaurant/base.html" %}
+
+{% block title %}Log in · {{ site.restaurant_name }}{% endblock %}
+
+{% block content %}
+<section class="wrap narrow">
+  <h1>Log in</h1>
+  <form method="post" class="form">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button class="btn" type="submit">Log in</button>
+  </form>
+  <p>New here? <a href="{% url 'restaurant:register' %}">Create an account</a></p>
+</section>
+{% endblock %}

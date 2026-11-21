@@ -1,0 +1,15 @@
+{% extends "restaurant/base.html" %}
+
+{% block title %}Book a table · {{ site.restaurant_name }}{% endblock %}
+
+{% block content %}
+<section class="wrap narrow">
+  <h1>Book a table</h1>
+  <p class="ga">Cuir bord in áirithe</p>
+  <form method="post" class="form">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button class="btn" type="submit">Request booking</button>
+  </form>
+</section>
+{% endblock %}

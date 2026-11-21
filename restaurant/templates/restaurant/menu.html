@@ -1,0 +1,33 @@
+{% extends "restaurant/base.html" %}
+
+{% block title %}Menu · {{ site.restaurant_name }}{% endblock %}
+
+{% block content %}
+<section class="wrap">
+  <h1>Our menu</h1>
+  {% for category in categories %}
+    {% if category.items.all %}
+    <h2>{{ category.name }}{% if category.name_ga %} · <span class="ga">{{ category.name_ga }}</span>{% endif %}</h2>
+    <div class="grid">
+      {% for item in category.items.all %}
+      <article class="card">
+        {% if item.image %}<img src="{{ item.image.url }}" alt="{{ item.name }}">{% endif %}
+        <h3>{{ item.name }}</h3>
+        {% if item.name_ga %}<p class="ga">{{ item.name_ga }}</p>{% endif %}
+        <p>{{ item.description }}</p>
+        <strong>€{{ item.price }}</strong>
+        <form method="post" action="{% url 'restaurant:cart_add' %}" class="add-form">
+          {% csrf_token %}
+          <input type="hidden" name="item_id" value="{{ item.id }}">
+          <input type="number" name="qty" value="1" min="1" max="20">
+          <button class="btn small" type="submit">Add to cart</button>
+        </form>
+      </article>
+      {% endfor %}
+    </div>
+    {% endif %}
+  {% empty %}
+    <p>The menu is coming soon.</p>
+  {% endfor %}
+</section>
+{% endblock %}

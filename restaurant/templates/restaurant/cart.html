@@ -1,0 +1,31 @@
+{% extends "restaurant/base.html" %}
+
+{% block title %}Your cart · {{ site.restaurant_name }}{% endblock %}
+
+{% block content %}
+<section class="wrap">
+  <h1>Your cart</h1>
+  {% if lines %}
+    {% for line in lines %}
+    <div class="card cart-line">
+      <div>
+        <h3>{{ line.item.name }}</h3>
+        <span>€{{ line.item.price }} each</span>
+      </div>
+      <form method="post" action="{% url 'restaurant:cart_update' %}" class="add-form">
+        {% csrf_token %}
+        <input type="hidden" name="item_id" value="{{ line.item.id }}">
+        <input type="number" name="qty" value="{{ line.qty }}" min="0" max="20">
+        <button class="btn small" type="submit">Update</button>
+      </form>
+      <strong>€{{ line.line_total }}</strong>
+    </div>
+    {% endfor %}
+    <p class="total">Total: €{{ total }}</p>
+    <p class="ga">Set a quantity of 0 to remove a dish.</p>
+    <a class="btn" href="{% url 'restaurant:checkout' %}">Proceed to checkout</a>
+  {% else %}
+    <p>Your cart is empty. <a href="{% url 'restaurant:menu' %}">Browse the menu</a></p>
+  {% endif %}
+</section>
+{% endblock %}

@@ -1,0 +1,32 @@
+{% extends "restaurant/base.html" %}
+
+{% block content %}
+<section class="hero">
+  <h1>Céad Míle Fáilte</h1>
+  <p class="tag">{{ site.tagline_en }}</p>
+  <p class="tag ga">{{ site.tagline_ga }}</p>
+  <a class="btn" href="{% url 'restaurant:menu' %}">View our menu</a>
+</section>
+
+<section class="wrap">
+  <h2>Our story · Ár scéal</h2>
+  <p>{{ site.story_en }}</p>
+  <p class="ga">{{ site.story_ga }}</p>
+</section>
+
+{% if featured %}
+<section class="wrap">
+  <h2>Featured dishes</h2>
+  <div class="grid">
+    {% for item in featured %}
+    <article class="card">
+      {% if item.image %}<img src="{{ item.image.url }}" alt="{{ item.name }}">{% endif %}
+      <h3>{{ item.name }}</h3>
+      <p>{{ item.description }}</p>
+      <strong>€{{ item.price }}</strong>
+    </article>
+    {% endfor %}
+  </div>
+</section>
+{% endif %}
+{% endblock %}

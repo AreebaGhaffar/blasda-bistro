@@ -1,0 +1,33 @@
+{% extends "restaurant/base.html" %}
+
+{% block title %}My account · {{ site.restaurant_name }}{% endblock %}
+
+{% block content %}
+<section class="wrap">
+  <h1>Welcome, {{ user.username }}</h1>
+
+  <h2>My orders</h2>
+  {% for order in orders %}
+    <div class="card">
+      <strong>Order #{{ order.id }}</strong> · {{ order.get_status_display }} · €{{ order.total }}<br>
+      Pickup: {{ order.pickup_time|date:"D j M, H:i" }}
+      <ul>
+        {% for line in order.items.all %}
+          <li>{{ line.quantity }} × {{ line.item_name }}</li>
+        {% endfor %}
+      </ul>
+    </div>
+  {% empty %}
+    <p>You haven't placed any orders yet.</p>
+  {% endfor %}
+
+  <h2>My table bookings</h2>
+  {% for b in bookings %}
+    <div class="card">
+      {{ b.date|date:"D j M Y" }} at {{ b.time|time:"H:i" }} · {{ b.guests }} guests · {{ b.get_status_display }}
+    </div>
+  {% empty %}
+    <p>No bookings yet.</p>
+  {% endfor %}
+</section>
+{% endblock %}

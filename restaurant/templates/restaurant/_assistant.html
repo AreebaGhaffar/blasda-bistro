@@ -1,0 +1,57 @@
+<div id="chat" data-url="{% url 'restaurant:assistant' %}" data-csrf="{{ csrf_token }}">
+  <button id="chat-toggle" type="button" aria-label="Open chat">💬 Ask us</button>
+  <div id="chat-box" hidden>
+    <div id="chat-head">Blasda assistant · Cabhair <button id="chat-close" type="button" aria-label="Close">×</button></div>
+    <div id="chat-log">
+      <div class="msg bot">Dia dhuit! Ask me about our menu, opening hours or bookings.</div>
+    </div>
+    <form id="chat-form">
+      <input id="chat-input" type="text" maxlength="500" placeholder="Type your question..." autocomplete="off" required>
+      <button type="submit">Send</button>
+    </form>
+  </div>
+</div>
+
+<script>
+(function () {
+  var root = document.getElementById("chat");
+  var box = document.getElementById("chat-box");
+  var log = document.getElementById("chat-log");
+  var form = document.getElementById("chat-form");
+  var input = document.getElementById("chat-input");
+  var history = [];
+
+  document.getElementById("chat-toggle").onclick = function () { box.hidden = !box.hidden; if (!box.hidden) input.focus(); };
+  document.getElementById("chat-close").onclick = function () { box.hidden = true; };
+
+  function add(text, who) {
+    var d = document.createElement("div");
+    d.className = "msg " + who;
+    d.textContent = text;
+    log.appendChild(d);
+    log.scrollTop = log.scrollHeight;
+    return d;
+  }
+
+  form.addEventListener("submit", function (e) {
+    e.preventDefault();
+    var text = input.value.trim();
+    if (!text) return;
+    add(text, "user");
+    input.value = "";
+    var wait = add("...", "bot");
+    fetch(root.dataset.url, {
+      method: "POST",
+      headers: { "Content-Type": "application/json", "X-CSRFToken": root.dataset.csrf },
+      body: JSON.stringify({ message: text, history: history })
+    })
+      .then(function (r) { return r.json(); })
+      .then(function (data) {
+        wait.textContent = data.reply;
+        history.push({ role: "user", content: text });
+        history.push({ role: "assistant", content: data.reply });
+      })
+      .catch(function () { wait.textContent = "Sorry, something went wrong. Please try again."; });
+  });
+})();
+</script>
