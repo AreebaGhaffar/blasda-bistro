@@ -1,24 +1,34 @@
 # Blasda Bistro – Deployment Guide (for the owner)
 
-This guide puts your website online. It takes about 45 minutes. You do not need to write code, only copy and paste.
+This guide puts your website online. Allow about 1 hour. You do not need to write code, only copy and paste. If you have a web developer, you can simply hand them this file.
 
-You will need:
-- A paid hosting account (this guide uses **PythonAnywhere**, which keeps your database and photos safe on a permanent disk)
-- Your domain name (for example `blasdabistro.ie`)
-- A free **Google Gemini API key** from https://aistudio.google.com/apikey
+## What you need
+
+- **A hosting account that can run Python websites.** This guide uses **PythonAnywhere** as the example. Hosting and your domain name are paid separately from the website itself. Before you sign up, check the host's current prices and plan features on its website. Two things matter:
+  - To use your own domain (for example `blasdabistro.ie`) you need a **paid** plan, not a free one.
+  - The AI features (dish descriptions and the chat assistant) need a plan that lets your website connect to outside services. Free plans on some hosts block this.
+- **Your domain name** (optional at first; you can test on the host's free address).
+- **A free Google Gemini key** from https://aistudio.google.com/apikey (only needed for the AI features; the rest of the website works without it).
+
+The zip file you received is called `blasda-bistro.zip`. Keep a copy somewhere safe.
 
 ---
 
-## Part 1 – Get the code onto the server
+## Part 1 – Put the code on the server
 
-1. Create your PythonAnywhere account and log in.
+1. Log in to PythonAnywhere. Open the **Files** tab, click **Upload a file**, and upload `blasda-bistro.zip` into your home folder.
 2. Open the **Consoles** tab and start a **Bash** console.
-3. Upload or clone the project so that it sits in `/home/YOURUSERNAME/blasda-bistro`.
-   (If the code is on GitHub, run: `git clone YOUR_REPOSITORY_LINK blasda-bistro`.)
+3. Unpack the zip:
+
+```
+unzip blasda-bistro.zip
+```
+
+This creates a folder called `blasda-bistro`.
 
 ## Part 2 – Install the project
 
-In the same Bash console, run these lines one at a time (replace nothing unless told):
+In the Bash console, run these lines one at a time:
 
 ```
 cd ~/blasda-bistro
@@ -38,17 +48,17 @@ nano .env
 ```
 
 2. Change every value in the file:
-   - `DJANGO_SECRET_KEY` – run this to create one, then paste the result:
+   - `DJANGO_SECRET_KEY` – create one with the command below and paste the result:
      `python -c "import secrets; print(secrets.token_urlsafe(50))"`
    - `DEBUG` – keep it as `False`
-   - `ALLOWED_HOSTS` – your domain, for example `blasdabistro.ie,www.blasdabistro.ie`
-   - `CSRF_TRUSTED_ORIGINS` – the same domains starting with `https://`
+   - `ALLOWED_HOSTS` – your website address(es), separated by commas, for example `blasdabistro.ie,www.blasdabistro.ie`. While testing on the host's free address, use that instead, for example `yourusername.pythonanywhere.com`.
+   - `CSRF_TRUSTED_ORIGINS` – the same addresses, each starting with `https://`
    - `ADMIN_URL` – choose a secret address for your admin page, for example `manage-blasda-7421/` (keep the slash at the end)
    - `BEHIND_PROXY` – keep it as `True`
-   - `GEMINI_API_KEY` – your own Gemini key
-3. Save in nano with `Ctrl + O`, Enter, then exit with `Ctrl + X`.
+   - `GEMINI_API_KEY` – your own Gemini key (leave it as it is if you do not want the AI features yet)
+3. Save in nano with `Ctrl + O`, then Enter, then exit with `Ctrl + X`.
 
-**Never share the `.env` file or put it on GitHub.** It contains your secrets.
+**Never share the `.env` file or send it by email. It contains your secrets.**
 
 ## Part 4 – Set up the database and your admin account
 
@@ -62,7 +72,7 @@ Choose a strong password for the admin account and keep it safe.
 
 ## Part 5 – Connect the website
 
-1. Open the **Web** tab and click **Add a new web app**. Choose your domain, then **Manual configuration**, then the Python version you used in Part 2.
+1. Open the **Web** tab and click **Add a new web app**. Choose your domain (or the free address), then **Manual configuration**, then the Python version you used in Part 2.
 2. In **Virtualenv**, enter: `/home/YOURUSERNAME/.virtualenvs/blasda`
 3. In **Code**, set the source directory to `/home/YOURUSERNAME/blasda-bistro`
 4. Click the **WSGI configuration file** link, delete everything, and paste:
@@ -88,51 +98,74 @@ application = get_wsgi_application()
 | `/static/` | `/home/YOURUSERNAME/blasda-bistro/staticfiles` |
 | `/media/` | `/home/YOURUSERNAME/blasda-bistro/media` |
 
-6. Turn on **Force HTTPS**, then click the green **Reload** button.
+6. If the Web tab offers a **Force HTTPS** switch, turn it on. Then click the green **Reload** button and open your website address.
+
+(Replace `YOURUSERNAME` everywhere with your PythonAnywhere username.)
 
 ## Part 6 – Use your own domain
 
-In the **Web** tab, follow the **domain / DNS** instructions shown there. You add one record at the company where you bought your domain. It can take up to a few hours to start working. HTTPS is switched on in the Web tab.
+In the **Web** tab, follow the domain and DNS instructions your host shows. You add a record at the company where you bought your domain. It can take from a few minutes to a few hours to start working. Make sure HTTPS (the padlock) is switched on for your domain; your host's help pages explain how.
 
-## Part 7 – First-time setup (5 minutes)
+## Part 7 – First-time setup (about 15 minutes)
 
-1. Open `https://yourdomain.ie/YOUR_ADMIN_URL` and log in.
-2. Open **Site settings** and enter your name, phone number, address, opening hours and Irish story text.
+1. Open `https://yourdomain.ie/YOUR_ADMIN_URL` (the secret address from Part 3) and log in.
+2. Open **Site settings** and enter your name, phone number, email, address, opening hours, home page heading, and your story text in English and Irish.
 3. Add your **Categories** (for example Starters, Mains, Desserts), then your **Menu items** with prices and photos.
-4. Tick dishes in **Menu items**, choose **Generate descriptions with AI**, and click **Go**. **Always proofread the English and Irish text, and add allergy information yourself. The AI must not be trusted for allergens.**
+4. In **Menu items**, tick some dishes, choose **Generate descriptions with AI**, and click **Go**. **Always proofread the English and the Irish text, and write allergy information yourself. Never trust the AI for allergens.**
 
 ---
 
 ## Everyday use
 
-- **Orders:** open **Orders**. Change the status (Pending, Confirmed, Preparing, Ready, Completed, Cancelled) and tick **Is paid** when you take payment.
-- **Bookings:** open **Bookings** and set each one to Confirmed or Cancelled. Please call or email the customer to let them know.
+- **Orders:** open **Orders**. Change the status (Pending, Confirmed, Preparing, Ready, Completed, Cancelled) and tick **Is paid** when you take payment. Customers pay at the restaurant when they collect; no money is taken online.
+- **Bookings:** open **Bookings** and set each one to Confirmed or Cancelled. **The website does not send emails or texts.** Please phone or email the customer to confirm.
 - **Prices and menu:** edit directly in **Menu items**. Untick **Is available** to hide a sold-out dish. The website and the chat assistant update straight away.
 - **Stop online orders:** untick **Accepting orders** in **Site settings**.
-- **Daily sales:** open **Daily sales logs**. It updates by itself and cannot be edited.
+- **Daily sales:** open **Daily sales logs**. It updates by itself and cannot be edited. The admin's **Recent actions** panel shows who changed what.
 
 ## Keeping your data safe (backups)
 
-Once a week, download these two items from PythonAnywhere's **Files** tab and keep them somewhere safe:
-- `db.sqlite3` (all orders, bookings, customers, menu)
+Once a week, download these two items from your host's file manager and keep them somewhere safe:
+- `db.sqlite3` (all orders, bookings, customers and menu data)
 - the `media` folder (dish photos)
 
 ## Updating the website later
 
+If your developer sends you an updated `blasda-bistro.zip`:
+
+1. Make a backup first (see above).
+2. Upload the new zip to your home folder, then in a Bash console run:
+
 ```
+unzip -o blasda-bistro.zip
 cd ~/blasda-bistro
-git pull
 workon blasda
 pip install -r requirements.txt
 python manage.py migrate
 python manage.py collectstatic --noinput
 ```
 
-Then click **Reload** in the Web tab.
+3. Click **Reload** in the Web tab.
+
+Your `.env`, `db.sqlite3` and `media` folder are not inside the zip, so they will not be overwritten.
+
+## Using a different host
+
+Any host that runs Python websites will work. In short:
+
+1. Install Python 3.12, then run `pip install -r requirements.txt`.
+2. Set the values from `.env.example` as environment variables or in a `.env` file.
+3. Run `python manage.py migrate` and `python manage.py collectstatic --noinput`.
+4. Start the site with `gunicorn config.wsgi:application`.
+5. Make sure your host keeps the `db.sqlite3` file and the `media` folder on permanent storage, and serves the `/media/` folder to visitors.
+6. Serve the site over HTTPS only.
 
 ## If something goes wrong
 
-- Blank or error page: open the **Web** tab and read the **Error log**.
-- Page looks unstyled: check the Static files rows in Part 5 and run `collectstatic` again.
-- Chat assistant says it is unavailable: check your Gemini key in `.env`, then Reload.
-- "Bad request" errors: check `ALLOWED_HOSTS` and `CSRF_TRUSTED_ORIGINS` in `.env`.
+- **Blank or error page:** open your host's error log (on PythonAnywhere: the **Web** tab, then **Error log**).
+- **Page looks unstyled:** check the Static files rows in Part 5 and run `collectstatic` again.
+- **"Bad request" errors:** check `ALLOWED_HOSTS` and `CSRF_TRUSTED_ORIGINS` in `.env`.
+- **"Too many redirects":** check that `BEHIND_PROXY=True` is in `.env`, then Reload.
+- **Chat assistant says it is unavailable:** check your Gemini key in `.env`, make sure your hosting plan allows outside connections, then Reload.
+- **Admin page not found:** use the secret `ADMIN_URL` you chose in Part 3, not `/admin/`.
+- **Screens look different from this guide:** hosts change their menus from time to time. Follow your host's current help pages for the same task.
