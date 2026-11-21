@@ -15,6 +15,7 @@
   <form method="post" class="form">
     {% csrf_token %}
     {{ form.as_p }}
+    <p class="ga">You pay at the restaurant when you collect your order. No payment is taken online.</p>
     <button class="btn" type="submit">Place order</button>
   </form>
 </section>

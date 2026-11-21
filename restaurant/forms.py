@@ -30,7 +30,13 @@ class CheckoutForm(forms.Form):
         input_formats=["%Y-%m-%dT%H:%M"],
         widget=forms.DateTimeInput(attrs={"type": "datetime-local"}, format="%Y-%m-%dT%H:%M"),
     )
-    payment_method = forms.ChoiceField(choices=Order.PaymentMethod.choices, label="Payment")
+    payment_method = forms.ChoiceField(
+        choices=[
+            (Order.PaymentMethod.CASH, "Cash at pickup"),
+            (Order.PaymentMethod.CARD, "Card machine at pickup"),
+        ],
+        label="How will you pay?",
+    )
     notes = forms.CharField(widget=forms.Textarea(attrs={"rows": 3}), required=False, label="Notes (allergies, requests)")
 
     def clean_pickup_time(self):
