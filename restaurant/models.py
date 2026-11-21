@@ -9,6 +9,8 @@ class SiteSetting(models.Model):
     restaurant_name = models.CharField(max_length=120, default="Blasda Bistro")
     tagline_en = models.CharField(max_length=200, blank=True)
     tagline_ga = models.CharField("Tagline (Irish)", max_length=200, blank=True)
+    hero_title = models.CharField("Home page heading", max_length=120, default="Céad Míle Fáilte")
+    hero_button = models.CharField("Home page button text", max_length=40, default="View our menu")
     story_en = models.TextField("Our story (English)", blank=True)
     story_ga = models.TextField("Our story (Irish)", blank=True)
     phone = models.CharField(max_length=30, blank=True)

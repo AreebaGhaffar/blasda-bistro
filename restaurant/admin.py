@@ -23,6 +23,7 @@ class SiteSettingAdmin(admin.ModelAdmin):
     fieldsets = (
         ("Restaurant", {"fields": ("restaurant_name", "accepting_orders")}),
         ("Taglines", {"fields": ("tagline_en", "tagline_ga")}),
+            ("Home page", {"fields": ("hero_title", "hero_button")}),
         ("Our story", {"fields": ("story_en", "story_ga")}),
         ("Contact and hours", {"fields": ("phone", "email", "address", "opening_hours")}),
     )

@@ -204,7 +204,7 @@ def _assistant_system_prompt():
 @require_POST
 def assistant_chat(request):
     # Rate limit: 10 messages per minute per visitor
-    ip = request.META.get("REMOTE_ADDR", "unknown")
+    ip = get_client_ip(request)
     key = f"assistant:{ip}"
     cache.add(key, 0, 60)
     if cache.incr(key) > 10:
@@ -240,3 +240,48 @@ def assistant_chat(request):
             status=503,
         )
     return JsonResponse({"reply": reply or "Sorry, I could not find an answer to that."})
+
+from django.contrib.auth.views import LoginView
+from django.core.cache import cache
+
+LOGIN_MAX_FAILS = 5
+LOGIN_WINDOW = 15 * 60
+
+
+class ThrottledLoginView(LoginView):
+    template_name = "restaurant/login.html"
+    redirect_authenticated_user = True
+
+    def _key(self):
+        name = self.request.POST.get("username", "").strip().lower()[:150]
+        return f"loginfail:{name}"
+
+    def post(self, request, *args, **kwargs):
+        if cache.get(self._key(), 0) >= LOGIN_MAX_FAILS:
+            return self.render_to_response(
+                self.get_context_data(form=self.get_form(), blocked=True)
+            )
+        return super().post(request, *args, **kwargs)
+
+    def form_invalid(self, form):
+        key = self._key()
+        cache.add(key, 0, LOGIN_WINDOW)
+        try:
+            cache.incr(key)
+        except ValueError:
+            cache.set(key, 1, LOGIN_WINDOW)
+        return super().form_invalid(form)
+
+    def form_valid(self, form):
+        cache.delete(self._key())
+        return super().form_valid(form)
+
+def get_client_ip(request):
+    """Real visitor address. Behind a hosting proxy, use the address the proxy recorded."""
+    import os
+
+    if os.environ.get("BEHIND_PROXY") == "True":
+        forwarded = request.META.get("HTTP_X_FORWARDED_FOR", "")
+        if forwarded:
+            return forwarded.split(",")[-1].strip()
+    return request.META.get("REMOTE_ADDR", "unknown")

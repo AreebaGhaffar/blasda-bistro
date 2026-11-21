@@ -2,10 +2,10 @@
 
 {% block content %}
 <section class="hero">
-  <h1>Céad Míle Fáilte</h1>
+  <h1>{{ site.hero_title|default:"Céad Míle Fáilte" }}</h1>
   <p class="tag">{{ site.tagline_en }}</p>
   <p class="tag ga">{{ site.tagline_ga }}</p>
-  <a class="btn" href="{% url 'restaurant:menu' %}">View our menu</a>
+  <a class="btn" href="{% url 'restaurant:menu' %}">{{ site.hero_button|default:"View our menu" }}</a>
 </section>
 
 <section class="wrap">
