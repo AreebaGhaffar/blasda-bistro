@@ -10,6 +10,7 @@ A web application for an Irish restaurant: online menu, takeaway ordering, table
 - Admin panel (CMS) for menu, prices, opening hours, story text, orders, and bookings
 - AI-generated dish descriptions (English and Irish) and a customer chat assistant
 - Automatic daily sales ledger
+- Customer personal data (names, phone numbers, emails, notes) encrypted in the database
 
 ## Tech stack
 Python 3.12, Django 5.2 LTS, SQLite, Google Gemini API (`google-genai`), WhiteNoise, Gunicorn

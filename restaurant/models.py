@@ -3,6 +3,9 @@ from decimal import Decimal
 from django.conf import settings
 from django.db import models
 
+from django.core.validators import validate_email
+
+from .fields import EncryptedCharField, EncryptedTextField
 
 class SiteSetting(models.Model):
     """Single row the owner edits in the admin: contact info, hours, Irish story text."""
@@ -81,10 +84,10 @@ class Order(models.Model):
     user = models.ForeignKey(
         settings.AUTH_USER_MODEL, on_delete=models.SET_NULL, null=True, blank=True, related_name="orders"
     )
-    customer_name = models.CharField(max_length=120)
-    phone = models.CharField(max_length=30)
+    customer_name = EncryptedCharField(max_length=120)
+    phone = EncryptedCharField(max_length=30)
     pickup_time = models.DateTimeField(help_text="Scheduled takeaway time")
-    notes = models.TextField(blank=True)
+    notes = EncryptedTextField(blank=True)
     status = models.CharField(max_length=20, choices=Status.choices, default=Status.PENDING)
     payment_method = models.CharField(max_length=10, choices=PaymentMethod.choices, default=PaymentMethod.CASH)
     is_paid = models.BooleanField(default=False)
@@ -122,13 +125,13 @@ class Booking(models.Model):
     user = models.ForeignKey(
         settings.AUTH_USER_MODEL, on_delete=models.SET_NULL, null=True, blank=True, related_name="bookings"
     )
-    name = models.CharField(max_length=120)
-    phone = models.CharField(max_length=30)
-    email = models.EmailField(blank=True)
+    name = EncryptedCharField(max_length=120)
+    phone = EncryptedCharField(max_length=30)
+    email = EncryptedCharField(max_length=254, blank=True, validators=[validate_email])
     date = models.DateField()
     time = models.TimeField()
     guests = models.PositiveIntegerField(default=2)
-    notes = models.TextField(blank=True)
+    notes = EncryptedTextField(blank=True)
     status = models.CharField(max_length=20, choices=Status.choices, default=Status.PENDING)
     created_at = models.DateTimeField(auto_now_add=True)
 

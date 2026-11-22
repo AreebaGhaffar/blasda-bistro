@@ -93,7 +93,7 @@ class MenuItemAdmin(admin.ModelAdmin):
     list_display = ("name", "category", "price", "is_available", "is_featured")
     list_editable = ("price", "is_available", "is_featured")
     list_filter = ("category", "is_available", "is_featured")
-    search_fields = ("name", "name_ga", "description")
+    search_fields = ("=id",)
     actions = [generate_ai_descriptions]
 
 
@@ -119,7 +119,7 @@ class BookingAdmin(admin.ModelAdmin):
     list_display = ("name", "date", "time", "guests", "phone", "status")
     list_editable = ("status",)
     list_filter = ("status", "date")
-    search_fields = ("name", "phone", "email")
+    search_fields = ("=id",)
 
 
 @admin.register(DailySalesLog)

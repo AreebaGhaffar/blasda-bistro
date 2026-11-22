@@ -178,3 +178,5 @@ CACHES = {
         "LOCATION": str(BASE_DIR / "django_cache"),
     }
 }
+
+FIELD_ENCRYPTION_KEY = os.environ.get("FIELD_ENCRYPTION_KEY", "")
